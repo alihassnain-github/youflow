@@ -1,31 +1,81 @@
+"use client"
+
+import { useToast } from "@/context/ToastContext";
+import signupAction from "@/lib/actions/signup";
 import { RiKey2Line, RiMailLine, RiUser3Line } from "@remixicon/react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, FormEvent, useState } from "react";
 
 export default function SignupForm() {
+
+    const [loading, setLoading] = useState(false);
+
+    const { addToast } = useToast()!;
+
+    const route = useRouter();
+
+    const [data, setData] = useState({
+        username: "",
+        email: "",
+        password: "",
+    });
+
+    function handleChange(e: ChangeEvent<HTMLInputElement>) {
+        setData({ ...data, [e.target.name]: e.target.value });
+    }
+
+    async function handleSubmit(e: FormEvent) {
+        e.preventDefault();
+
+        setLoading(true);
+
+        const response = await signupAction(data);
+
+        if (response.success) {
+            route.push('/');
+            addToast(response.message, "success", 5000);
+        } else {
+            addToast(response.message, "error", 5000);
+        }
+
+        setLoading(false);
+
+    }
+
     return (
         <div className="w-full max-w-md">
 
             <div className="border border-base-300 rounded-xl p-6 shadow-sm bg-base-100">
 
-                <form className="flex flex-col gap-4">
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
 
                     <h1 className="text-center font-bold text-xl md:text-2xl mb-4">Create an account</h1>
 
                     <label className="input w-full">
                         <RiUser3Line className="h-[1em] opacity-50" />
-                        <input type="text" placeholder="Username" />
+                        <input type="text" name="username" value={data.username} onChange={handleChange} placeholder="Username" />
                     </label>
 
                     <label className="input w-full">
                         <RiMailLine className="h-[1em] opacity-50" />
-                        <input type="email" placeholder="Email" />
+                        <input type="email" name="email" value={data.email} onChange={handleChange} placeholder="Email" />
                     </label>
 
                     <label className="input w-full">
                         <RiKey2Line className="h-[1em] opacity-50" />
-                        <input type="password" placeholder="Password" />
+                        <input type="password" name="password" value={data.password} onChange={handleChange} placeholder="Password" />
                     </label>
 
-                    <button type="submit" className="btn btn-default btn-block">Create account</button>
+                    <button type="submit" className="btn btn-default btn-block" disabled={loading}>
+                        {loading ? (
+                            <>
+                                <span className="loading loading-spinner"></span>
+                                loading
+                            </>
+                        ) : (
+                            "Create account"
+                        )}
+                    </button>
 
                     <div className="divider">OR</div>
 
@@ -42,6 +92,7 @@ export default function SignupForm() {
                 </form>
 
             </div>
+
         </div>
     );
 }

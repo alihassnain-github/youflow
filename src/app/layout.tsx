@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { ToastProvider } from "@/context/ToastContext";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -20,13 +21,15 @@ export default function RootLayout({
 }>) {
   return (
     <ThemeProvider>
-      <html lang="en">
-        <body
-          className={outfit.className}
-        >
-          {children}
-        </body>
-      </html>
+      <ToastProvider>
+        <html lang="en">
+          <body
+            className={outfit.className}
+          >
+            {children}
+          </body>
+        </html>
+      </ToastProvider>
     </ThemeProvider>
   );
 }
