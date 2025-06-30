@@ -32,8 +32,7 @@ export default function SignupForm() {
         const response = await signupAction(data);
 
         if (response.success) {
-            route.push('/');
-            addToast(response.message, "success", 5000);
+            route.push('/verify-email');
         } else {
             addToast(response.message, "error", 5000);
         }
