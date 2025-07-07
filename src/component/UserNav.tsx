@@ -1,4 +1,23 @@
+"use client";
+
+import { useToast } from "@/context/ToastContext";
+import { app } from "@/firebase/config";
+import { getAuth, signOut } from "firebase/auth";
+
 export default function UserNav() {
+
+    const { addToast } = useToast()!;
+
+    async function handleClick() {
+        try {
+            const auth = getAuth(app);
+            await signOut(auth);
+        } catch (error) {
+            console.error("Error signing out:", error);
+            addToast("Sign out failed. Please try again.", "error", 5000);
+        }
+    }
+
     return (
         <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
@@ -17,7 +36,7 @@ export default function UserNav() {
                         <p className="text-xs text-gray-500 truncate">alimurtaza32721@gmail.com</p>
                     </div>
                 </li>
-                <li><a>Logout</a></li>
+                <li><a onClick={handleClick}>Logout</a></li>
             </ul>
         </div>
     )
